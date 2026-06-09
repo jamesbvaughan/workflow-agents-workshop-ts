@@ -1,5 +1,5 @@
 # worker-agents. Web + Background Worker + Valkey + Postgres.
-# Deploy from the repo root (rootDir: ../..) so the npm workspaces resolve.
+# Builds from the repo root so the npm workspaces resolve.
 
 databases:
   - name: worker-agents-db
@@ -22,7 +22,6 @@ services:
     runtime: node
     region: oregon
     plan: starter
-    rootDir: ../..
     buildCommand: npm install
     startCommand: npm run start --workspace @workshop/worker-agents
     healthCheckPath: /healthz
@@ -52,7 +51,6 @@ services:
     region: oregon
     plan: starter
     numInstances: 1
-    rootDir: ../..
     buildCommand: npm install
     startCommand: npm run start:worker --workspace @workshop/worker-agents
     envVars:

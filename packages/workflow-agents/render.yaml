@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=https://render.com/schema/render.yaml.json
 #
 # workflow-agents. Web host (Hono) + managed Postgres.
-# Deploy from the repo root (rootDir: ../..) so the npm workspaces resolve.
+# Builds from the repo root so the npm workspaces resolve.
 #
-# The Workflow *worker* (which runs the registered tasks) is created separately
-# in the Render Dashboard as a Workflow — see docs/03-workflow-agents.md.
+# The Workflow service is created separately with the Render CLI — see
+# docs/03-workflow-agents.md.
 
 databases:
   - name: workflow-agents-db
@@ -18,7 +18,6 @@ services:
     runtime: node
     region: oregon
     plan: starter
-    rootDir: ../..
     buildCommand: npm install
     startCommand: npm run start --workspace @workshop/workflow-agents
     healthCheckPath: /healthz
@@ -28,12 +27,6 @@ services:
         fromDatabase:
           name: workflow-agents-db
           property: connectionString
-
-      # LLM provider — optional; without a key the agents use a mock model.
-      - key: ANTHROPIC_API_KEY
-        sync: false
-      - key: OPENAI_API_KEY
-        sync: false
 
       # Render Workflow task dispatch (production)
       - key: RENDER_API_KEY
@@ -46,11 +39,6 @@ services:
       # GitHub webhook HMAC verification + token for diffs
       - key: GITHUB_WEBHOOK_SECRET
         sync: false
-      - key: GITHUB_TOKEN
-        sync: false
 
-      # Run tasks in-process (set "true" only for local dev)
-      - key: RENDER_USE_LOCAL_DEV
-        value: "false"
       - key: NODE_ENV
         value: production
