@@ -7,13 +7,13 @@
  *   queue-agents    → agent.run(input) inside a queue consumer
  *   workflow-agents → task(agent.name, ({ input }) => agent.run(input))
  */
-import { defineAgent } from './agent.js'
-import { hasFrontendFiles } from './helpers.js'
-import { resolveModelSpec } from './model-tiers.js'
-import type { Patch } from './prepareDiff.js'
-import type { Agent } from './types.js'
+import { defineAgent } from "./agent.js";
+import { hasFrontendFiles } from "./helpers.js";
+import { resolveModelSpec } from "./model-tiers.js";
+import type { Patch } from "./prepareDiff.js";
+import type { Agent } from "./types.js";
 
-export { hasFrontendFiles } from './helpers.js'
+export { hasFrontendFiles } from "./helpers.js";
 
 const FINDING_FORMAT = `## Output format
 
@@ -23,12 +23,12 @@ Return a short list of findings. Each finding has:
 - **note**: 1–3 sentences. State the problem and the fix. Do not restate the diff.
 
 Prefer one precise finding over several vague ones. Never invent line numbers —
-cite what you actually see in the patch. If you find nothing, say so explicitly.`
+cite what you actually see in the patch. If you find nothing, say so explicitly.`;
 
 export const securityReviewer: Agent = defineAgent({
-  name: 'security',
-  model: resolveModelSpec('medium'),
-  tools: ['scan_for_secrets'],
+  name: "security",
+  model: resolveModelSpec("gpt-5.5"),
+  tools: ["scan_for_secrets"],
   systemPrompt: `# Security reviewer
 
 You review a pull request's per-file patches. Stay strictly within your specialty;
@@ -43,12 +43,12 @@ Use \`scan_for_secrets\` on any snippet that might contain credentials before
 filing a finding about secret exposure.
 
 ${FINDING_FORMAT}`,
-})
+});
 
 export const performanceReviewer: Agent = defineAgent({
-  name: 'performance',
-  model: resolveModelSpec('medium'),
-  tools: ['diff_stats'],
+  name: "performance",
+  model: resolveModelSpec("gpt-5.5"),
+  tools: ["diff_stats"],
   systemPrompt: `# Performance reviewer
 
 You review a pull request's per-file patches. Stay strictly within your specialty;
@@ -62,12 +62,12 @@ Use \`diff_stats\` on large or suspicious hunks to quantify the size of a change
 before commenting on hot-path impact.
 
 ${FINDING_FORMAT}`,
-})
+});
 
 export const uxReviewer: Agent = defineAgent({
-  name: 'ux',
-  model: resolveModelSpec('medium'),
-  tools: ['contrast_ratio'],
+  name: "ux",
+  model: resolveModelSpec("gpt-5.5"),
+  tools: ["contrast_ratio"],
   systemPrompt: `# UX reviewer
 
 You review a pull request's per-file patches. Stay strictly within your specialty;
@@ -82,11 +82,11 @@ Use \`contrast_ratio\` when the diff changes text or background colors to verify
 WCAG contrast before filing an accessibility finding.
 
 ${FINDING_FORMAT}`,
-})
+});
 
 export const judge: Agent = defineAgent({
-  name: 'judge',
-  model: resolveModelSpec('large'),
+  name: "judge",
+  model: resolveModelSpec("gpt-5.5"),
   systemPrompt: `# Judge
 
 You receive the findings from every specialist reviewer. Weigh them, deduplicate,
@@ -97,17 +97,17 @@ and produce a single decision as JSON:
 Approve unless at least one finding is severity \`block\`, or the cumulative
 \`warn\`s clearly warrant changes. Do not re-review the diff yourself — decide only
 from the findings you are given. Respond with JSON only, no prose around it.`,
-})
+});
 
 /** The reviewers that always run, fanned out in parallel. */
-export const REVIEWERS: Agent[] = [securityReviewer, performanceReviewer]
+export const REVIEWERS: Agent[] = [securityReviewer, performanceReviewer];
 
 /**
  * The reviewers to run for a given diff: the always-on specialists plus the UX
  * reviewer when the diff contains frontend files.
  */
 export function selectReviewers(patches: Patch[]): Agent[] {
-  return hasFrontendFiles(patches) ? [...REVIEWERS, uxReviewer] : [...REVIEWERS]
+  return hasFrontendFiles(patches) ? [...REVIEWERS, uxReviewer] : [...REVIEWERS];
 }
 
 /** Every agent, by name. */
@@ -116,4 +116,4 @@ export const AGENTS: Record<string, Agent> = {
   [performanceReviewer.name]: performanceReviewer,
   [uxReviewer.name]: uxReviewer,
   [judge.name]: judge,
-}
+};
