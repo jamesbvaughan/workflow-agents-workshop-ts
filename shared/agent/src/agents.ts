@@ -27,7 +27,7 @@ cite what you actually see in the patch. If you find nothing, say so explicitly.
 
 export const securityReviewer: Agent = defineAgent({
   name: "security",
-  model: resolveModelSpec("gpt-5.5"),
+  model: resolveModelSpec("gpt-4o"),
   tools: ["scan_for_secrets"],
   systemPrompt: `# Security reviewer
 
@@ -47,7 +47,7 @@ ${FINDING_FORMAT}`,
 
 export const performanceReviewer: Agent = defineAgent({
   name: "performance",
-  model: resolveModelSpec("gpt-5.5"),
+  model: resolveModelSpec("gpt-4o"),
   tools: ["diff_stats"],
   systemPrompt: `# Performance reviewer
 
@@ -66,7 +66,7 @@ ${FINDING_FORMAT}`,
 
 export const uxReviewer: Agent = defineAgent({
   name: "ux",
-  model: resolveModelSpec("gpt-5.5"),
+  model: resolveModelSpec("gpt-4o"),
   tools: ["contrast_ratio"],
   systemPrompt: `# UX reviewer
 
@@ -86,7 +86,7 @@ ${FINDING_FORMAT}`,
 
 export const judge: Agent = defineAgent({
   name: "judge",
-  model: resolveModelSpec("gpt-5.5"),
+  model: resolveModelSpec("gpt-4o"),
   systemPrompt: `# Judge
 
 You receive the findings from every specialist reviewer. Weigh them, deduplicate,
